@@ -3,19 +3,23 @@ const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
+const cors = require("cors");
+
 
 dotenv.config();
 connectDB();
 
 const app = express();
+
+app.use(cors());
 app.use(express.json());
 
 // routes
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-app.use("/api/auth", require("./routes/authRoutes"));
-app.use("/api/data", require("./routes/dataRoutes"));
+app.use("/api/auth", require("./routes/authRoutes")); //done
+app.use("/api/courses", require("./routes/dataRoutes"));
 app.use("/api/exams", require("./routes/examRoutes"));
-app.use("/api/advisors", require("./routes/advisorRoutes"));
+app.use("/api/advisors", require("./routes/advisorRoutes")); //done
 app.use("/api/data", require("./routes/collegeRoutes"));
 
 const PORT = process.env.PORT || 5000;

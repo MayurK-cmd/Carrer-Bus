@@ -1,4 +1,4 @@
-exports.getAfter10th = (req, res) => {
+exports.getAfter12th = (req, res) => {
   const data = {
     majorAcademicStreams: {
       Science: "Includes subjects like Physics, Chemistry, Biology, and Mathematics; leads to careers in engineering, medicine, research, and technology.",
@@ -42,7 +42,7 @@ exports.getAfter10th = (req, res) => {
   res.json(data);
 };
 
-exports.getAfter12th = (req, res) => {
+exports.getAfter10th = (req, res) => {
   const data = {
     science: {
       engineering: "Bachelor of Technology (B.Tech)/Engineering (B.E): For students with Physics, Chemistry, and Mathematics (PCM).",
