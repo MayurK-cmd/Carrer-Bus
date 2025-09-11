@@ -14,6 +14,15 @@ function Colleges() {
   const [error, setError] = useState("");
 
   const token = localStorage.getItem("token");
+  const API_BASE = "http://localhost:3000/api/data";
+
+  const clearInputs = () => {
+    setType("");
+    setState("");
+    setCity("");
+    setName("");
+    setGovt(false);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,22 +36,20 @@ function Colleges() {
 
       if (searchMode === "state") {
         payload.state = state;
-        url = govt ? "http://localhost:3000/api/data/government-college-state" : "http://localhost:3000/api/data/college-state";
+        url = govt ? `${API_BASE}/government-college-state` : `${API_BASE}/college-state`;
       } else if (searchMode === "city") {
         payload.city = city;
-        url = govt ? "http://localhost:3000/api/data/government-college-city" : "http://localhost:3000/api/data/college-city";
+        url = govt ? `${API_BASE}/government-college-city` : `${API_BASE}/college-city`;
       } else if (searchMode === "search") {
         payload.name = name;
         if (state) payload.state = state;
         if (city) payload.city = city;
-        url = govt ? "http://localhost:3000/api/data/search-government-college" : "http://localhost:3000/api/data/search-college";
+        url = govt ? `${API_BASE}/search-government-college` : `${API_BASE}/search-college`;
       }
 
-      const res = await axios.post(
-        url,
-        payload,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const res = await axios.post(url, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       setColleges(res.data || []);
     } catch (err) {
@@ -53,118 +60,234 @@ function Colleges() {
     }
   };
 
+  // ✅ Dropdown options
+  const collegeTypes = [
+    "Engineering",
+    "Medical",
+    "Nursing",
+    "Commerce",
+    "Arts",
+    "Law",
+    "Management",
+    "Pharmacy",
+    "Agriculture",
+    "Polytechnic",
+    "Design",
+    "Education",
+    "Others",
+  ];
+
+  const indianStates = [
+    "Andhra Pradesh",
+    "Arunachal Pradesh",
+    "Assam",
+    "Bihar",
+    "Chhattisgarh",
+    "Goa",
+    "Gujarat",
+    "Haryana",
+    "Himachal Pradesh",
+    "Jharkhand",
+    "Karnataka",
+    "Kerala",
+    "Madhya Pradesh",
+    "Maharashtra",
+    "Manipur",
+    "Meghalaya",
+    "Mizoram",
+    "Nagaland",
+    "Odisha",
+    "Punjab",
+    "Rajasthan",
+    "Sikkim",
+    "Tamil Nadu",
+    "Telangana",
+    "Tripura",
+    "Uttar Pradesh",
+    "Uttarakhand",
+    "West Bengal",
+    "Andaman and Nicobar Islands",
+    "Chandigarh",
+    "Dadra and Nagar Haveli and Daman and Diu",
+    "Delhi",
+    "Jammu and Kashmir",
+    "Ladakh",
+    "Lakshadweep",
+    "Puducherry",
+  ];
+
   return (
     <div>
+      <div className="mt-25">
       <DashboardHeader />
-      <h2 className="text-2xl font-bold mb-4">Colleges</h2>
+      </div>
+      <h2 className="text-2xl font-bold mb-6 text-center">Colleges</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <label>
-          Search Mode:
-          <select value={searchMode} onChange={(e) => setSearchMode(e.target.value)}>
-            <option value="state">By State</option>
-            <option value="city">By City</option>
-            <option value="search">Search by Name</option>
-          </select>
-        </label>
+      {/* Centered Container */}
+      <div className="flex justify-center">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4 p-6 bg-gray-100 rounded-md shadow-md w-full max-w-xl text-center"
+        >
+          {/* Mode Selector */}
+          <div>
+            <label className="font-medium">Search Mode:</label>
+            <select
+              value={searchMode}
+              onChange={(e) => setSearchMode(e.target.value)}
+              className="ml-2 p-2 border rounded w-64"
+            >
+              <option value="state">By State</option>
+              <option value="city">By City</option>
+              <option value="search">Search by Name</option>
+            </select>
+          </div>
 
-        <label>
-          College Type:
-          <input
-            type="text"
-            placeholder="e.g. engineering, medical"
-            value={type}
-            onChange={(e) => setType(e.target.value)}
-            required
-          />
-        </label>
-
-        {searchMode === "state" && (
-          <label>
-            State:
-            <input
-              type="text"
-              placeholder="Enter state"
-              value={state}
-              onChange={(e) => setState(e.target.value)}
+          {/* College Type Dropdown */}
+          <div>
+            <label className="font-medium">College Type:</label>
+            <select
+              value={type}
+              onChange={(e) => setType(e.target.value)}
               required
-            />
-          </label>
-        )}
+              className="ml-2 p-2 border rounded w-64"
+            >
+              <option value="">Select type</option>
+              {collegeTypes.map((cType, idx) => (
+                <option key={idx} value={cType.toLowerCase()}>
+                  {cType}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        {searchMode === "city" && (
-          <label>
-            City:
-            <input
-              type="text"
-              placeholder="Enter city"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              required
-            />
-          </label>
-        )}
-
-        {searchMode === "search" && (
-          <>
-            <label>
-              Name:
-              <input
-                type="text"
-                placeholder="Enter college name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
-            </label>
-            <label>
-              State (optional):
-              <input
-                type="text"
+          {/* Conditional Inputs */}
+          {searchMode === "state" && (
+            <div>
+              <label className="font-medium">State:</label>
+              <select
                 value={state}
                 onChange={(e) => setState(e.target.value)}
-              />
-            </label>
-            <label>
-              City (optional):
+                required
+                className="ml-2 p-2 border rounded w-64"
+              >
+                <option value="">Select state</option>
+                {indianStates.map((st, idx) => (
+                  <option key={idx} value={st}>
+                    {st}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {searchMode === "city" && (
+            <div>
+              <label className="font-medium">City:</label>
               <input
                 type="text"
+                placeholder="Enter city"
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
+                required
+                className="ml-2 p-2 border rounded w-64"
               />
+            </div>
+          )}
+
+          {searchMode === "search" && (
+            <>
+              <div>
+                <label className="font-medium">Name:</label>
+                <input
+                  type="text"
+                  placeholder="Enter college name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  className="ml-2 p-2 border rounded w-64"
+                />
+              </div>
+
+              <div>
+                <label className="font-medium">State (optional):</label>
+                <select
+                  value={state}
+                  onChange={(e) => setState(e.target.value)}
+                  className="ml-2 p-2 border rounded w-64"
+                >
+                  <option value="">Select state</option>
+                  {indianStates.map((st, idx) => (
+                    <option key={idx} value={st}>
+                      {st}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="font-medium">City (optional):</label>
+                <input
+                  type="text"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  className="ml-2 p-2 border rounded w-64"
+                />
+              </div>
+            </>
+          )}
+
+          {/* Govt Filter */}
+          <div>
+            <label className="inline-flex items-center">
+              <input
+                type="checkbox"
+                checked={govt}
+                onChange={() => setGovt(!govt)}
+                className="mr-2"
+              />
+              Government Colleges Only
             </label>
-          </>
-        )}
+          </div>
 
-        <label>
-          <input
-            type="checkbox"
-            checked={govt}
-            onChange={() => setGovt(!govt)}
-          />
-          Government Colleges Only
-        </label>
+          {/* Buttons */}
+          <div className="flex justify-center gap-4">
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Search
+            </button>
+            <button
+              type="button"
+              onClick={clearInputs}
+              className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+            >
+              Clear
+            </button>
+          </div>
+        </form>
+      </div>
 
-        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">
-          Search
-        </button>
-      </form>
+      {/* Results */}
+      {loading && <p className="mt-4 text-center">Loading colleges...</p>}
+      {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
 
-      {loading && <p>Loading colleges...</p>}
-      {error && <p className="text-red-500">{error}</p>}
-
-      <div className="mt-6">
+      <div className="mt-6 flex justify-center">
         {colleges.length > 0 ? (
-          <ul className="space-y-2">
+          <ul className="space-y-3 w-full max-w-xl">
             {colleges.map((college, index) => (
-              <li key={index} className="border p-2 rounded">
+              <li
+                key={index}
+                className="border p-4 rounded bg-white shadow-sm hover:shadow-md transition"
+              >
                 <strong>{college.name}</strong> <br />
                 {college.city}, {college.state}
               </li>
             ))}
           </ul>
         ) : (
-          !loading && <p>No colleges found.</p>
+          !loading && <p className="text-center">No colleges found.</p>
         )}
       </div>
     </div>

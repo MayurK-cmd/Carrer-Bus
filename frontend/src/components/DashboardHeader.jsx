@@ -1,7 +1,11 @@
-import { Link, useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
+import CardNav from "./CardNav";
+//import logo from "./logo.svg";
 
 function DashboardHeader() {
   const location = useLocation();
+
+  // Only show inside dashboard sections
   const isHomeSection =
     location.pathname.startsWith("/home") ||
     location.pathname.startsWith("/colleges") ||
@@ -9,33 +13,60 @@ function DashboardHeader() {
     location.pathname.startsWith("/exams") ||
     location.pathname.startsWith("/profile");
 
-  if (!isHomeSection) return null; // show only inside student dashboard
+  if (!isHomeSection) return null;
+
+  const items = [
+    {
+      label: "Colleges",
+      bgColor: "#0D0716",
+      textColor: "#fff",
+      links: [
+        { label: "Browse", ariaLabel: "Browse Colleges", to: "/colleges" },
+        //{ label: "Top Ranked", ariaLabel: "Top Colleges", to: "/colleges?rank=top" }
+      ]
+    },
+    {
+      label: "Courses",
+      bgColor: "#170D27",
+      textColor: "#fff",
+      links: [
+        { label: "All Courses", ariaLabel: "Browse Courses", to: "/courses" },
+        //{ label: "By Stream", ariaLabel: "Courses by Stream", to: "/courses?filter=stream" }
+      ]
+    },
+    {
+      label: "Exams",
+      bgColor: "#271E37",
+      textColor: "#fff",
+      links: [
+        { label: "Exams", ariaLabel: "Exams", to: "/exams" },
+        //{ label: "Results", ariaLabel: "Exam Results", to: "/exams?tab=results" }
+      ]
+    },
+    {
+      label: "Profile",
+      bgColor: "#371E27",
+      textColor: "#fff",
+      links: [
+        { label: "My Profile", ariaLabel: "View Profile", to: "/profile" },
+        //{ label: "Settings", ariaLabel: "Profile Settings", to: "/profile/settings" }
+      ]
+    }
+  ];
 
   return (
-    <nav style={navStyle}>
-      <Link to="/colleges" style={btnStyle}>Colleges</Link>
-      <Link to="/courses" style={btnStyle}>Courses</Link>
-      <Link to="/exams" style={btnStyle}>Exams</Link>
-      <Link to="/profile" style={btnStyle}>Profile</Link>
-    </nav>
+    <CardNav
+      //logo={logo}
+      //logoAlt="Course & Career Logo"
+      items={items}
+      baseColor="#fff"
+      menuColor="#000"
+      buttonBgColor="#6D28D9"     // violet theme
+      buttonTextColor="#fff"
+      ease="power3.out"
+      linkComponent={Link}         // <-- integrate react-router links
+    />
   );
 }
-
-const navStyle = {
-  display: "flex",
-  justifyContent: "center",
-  gap: "1rem",
-  background: "#f0f0f0",
-  padding: "1rem",
-  marginBottom: "1rem",
-};
-
-const btnStyle = {
-  padding: "0.5rem 1rem",
-  background: "#333",
-  color: "white",
-  borderRadius: "6px",
-  textDecoration: "none",
-};
 
 export default DashboardHeader;

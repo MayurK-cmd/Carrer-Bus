@@ -3,7 +3,14 @@ import { Link, useLocation } from "react-router-dom";
 function Header() {
   const location = useLocation();
 
-  // Show login buttons only on landing page
+  // Define the allowed routes
+  const allowedRoutes = ["/", "/login/student", "/signup/student"];
+
+  // If current route is not in allowed list, don't render the header
+  if (!allowedRoutes.includes(location.pathname)) {
+    return null;
+  }
+
   const isLanding = location.pathname === "/";
 
   return (
