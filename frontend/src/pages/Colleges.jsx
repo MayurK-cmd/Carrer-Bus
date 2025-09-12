@@ -12,6 +12,22 @@ function Colleges() {
   const [colleges, setColleges] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const collegesPerPage = 27;
+
+  // Calculate indices for pagination
+const indexOfLastCollege = currentPage * collegesPerPage;
+const indexOfFirstCollege = indexOfLastCollege - collegesPerPage;
+const currentColleges = colleges.slice(indexOfFirstCollege, indexOfLastCollege);
+const totalPages = Math.ceil(colleges.length / collegesPerPage);
+
+// Handle page change
+const handlePageChange = (pageNumber) => {
+  setCurrentPage(pageNumber);
+  window.scrollTo({ top: 0, behavior: "smooth" }); // optional
+};
+
+
 
   const token = localStorage.getItem("token");
   const API_BASE = "http://localhost:3000/api/data";
@@ -56,6 +72,8 @@ function Colleges() {
       console.error("Error fetching colleges:", err);
       setError("Failed to fetch colleges. Please try again.");
     } finally {
+      setCurrentPage(1);
+
       setLoading(false);
     }
   };
@@ -269,27 +287,70 @@ function Colleges() {
         </form>
       </div>
 
-      {/* Results */}
-      {loading && <p className="mt-4 text-center">Loading colleges...</p>}
-      {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
+      
+{loading && <p className="mt-4 text-center">Loading colleges...</p>}
+{error && <p className="text-red-500 mt-4 text-center">{error}</p>}
 
-      <div className="mt-6 flex justify-center">
-        {colleges.length > 0 ? (
-          <ul className="space-y-3 w-full max-w-xl">
-            {colleges.map((college, index) => (
-              <li
-                key={index}
-                className="border p-4 rounded bg-white shadow-sm hover:shadow-md transition"
-              >
-                <strong>{college.name}</strong> <br />
-                {college.city}, {college.state}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          !loading && <p className="text-center">No colleges found.</p>
-        )}
+<div className="mt-6 flex justify-center">
+  {colleges.length > 0 ? (
+    <div className="w-full max-w-5xl">
+      {/* College Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {currentColleges.map((college, index) => (
+          <div
+            key={index}
+            className="border p-4 rounded-lg bg-white shadow-sm hover:shadow-md transition"
+          >
+            <strong className="block text-lg font-semibold">{college.name}</strong>
+            <p className="text-gray-600">{college.city}, {college.state}</p>
+          </div>
+        ))}
       </div>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-center mt-6 space-x-2">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className={`px-3 py-1 rounded ${
+            currentPage === 1 ? "bg-gray-300 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"
+          }`}
+        >
+          Prev
+        </button>
+
+        {[...Array(totalPages).keys()].map((page) => (
+          <button
+            key={page + 1}
+            onClick={() => handlePageChange(page + 1)}
+            className={`px-3 py-1 rounded ${
+              currentPage === page + 1
+                ? "bg-blue-700 text-white"
+                : "bg-gray-200 hover:bg-gray-300"
+            }`}
+          >
+            {page + 1}
+          </button>
+        ))}
+
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className={`px-3 py-1 rounded ${
+            currentPage === totalPages ? "bg-gray-300 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"
+          }`}
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  ) : (
+    !loading && <p className="text-center">No colleges found.</p>
+  )}
+</div>
+
+
+
     </div>
   );
 }
