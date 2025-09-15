@@ -112,7 +112,7 @@ const Sidebar = () => {
           Icon={FiShoppingCart}
           title="About Us"
           selected={selected}
-          onClick={() => handleNavigation("About Us", "/about")}
+          onClick={() => handleNavigation("About Us", "/404/404/too-early/here/lol")}
           open={open}
         />
         <Option
