@@ -10,6 +10,7 @@ const studentSchema = new mongoose.Schema({
   age: { type: Number, required: true },
   city: { type: String, required: true },
   contactNumber: { type: String, required: true },
+  countryCode: { type: String, required: true },
 });
 
 module.exports = mongoose.model("Student", studentSchema);
