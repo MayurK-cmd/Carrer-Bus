@@ -28,7 +28,7 @@ function Colleges() {
   };
 
   const token = localStorage.getItem("token");
-  const API_BASE = "https://sih-73ja.onrender.com/api";
+  const API_BASE = "https://sih-73ja.onrender.com/api/data";
 
   const clearInputs = () => {
     setType("");
