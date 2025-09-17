@@ -8,7 +8,7 @@ const cors = require('cors');
 
 // Middleware
 
-app.use(cors());
+
 
 
 const app = express();
