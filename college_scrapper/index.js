@@ -70,7 +70,7 @@ function createTypeRoutes(type) {
 
   app.use(cors());
   app.use(cors({
-    origin: 'https://carrer-bus.vercel.app', 
+    origin: ['https://carrer-bus.vercel.app','http://localhost:5173','http://localhost:3000','https://sih-73ja.onrender.com'], // Allow only specific origins
      
     
     credentials: true
