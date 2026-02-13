@@ -1,82 +1,58 @@
-name: Backend 1 CI/CD
+name: Backend CI
 
 on:
   push:
-    branches: [main, develop]
     paths:
-      - 'backend-1/**'
-      - '.github/workflows/backend-1.yml'
+      - 'backend/**'
   pull_request:
-    branches: [main, develop]
     paths:
-      - 'backend-1/**'
+      - 'backend/**'
 
 jobs:
-  test:
+  backend:
     runs-on: ubuntu-latest
-    
-    services:
-      mongodb:
-        image: mongo:6.0
-        ports:
-          - 27017:27017
-        env:
-          MONGO_INITDB_ROOT_USERNAME: test
-          MONGO_INITDB_ROOT_PASSWORD: test
-        options: >-
-          --health-cmd "mongosh --eval 'db.adminCommand({ping: 1})'"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-    
+    defaults:
+      run:
+        working-directory: backend
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
     steps:
-      - uses: actions/checkout@v3
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: backend-1/package-lock.json
-      
-      - name: Install dependencies
-        working-directory: ./backend-1
-        run: npm ci
-      
-      - name: Run linter
-        working-directory: ./backend-1
-        run: npm run lint || echo "No lint script found"
-      
-      - name: Run tests
-        working-directory: ./backend-1
-        run: npm test
-        env:
-          MONGODB_URI: mongodb://test:test@localhost:27017/test?authSource=admin
-          NODE_ENV: test
-          JWT_SECRET: test_secret
-      
-      - name: Build check
-        working-directory: ./backend-1
-        run: |
-          if [ -f "package.json" ] && grep -q "\"build\"" package.json; then
-            npm run build
-          else
-            echo "No build script, skipping..."
-          fi
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    
-    steps:
-      - name: Deploy to Render
-        uses: johnbeynon/render-deploy-action@v0.0.8
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
         with:
-          service-id: ${{ secrets.RENDER_BACKEND_1_SERVICE_ID }}
-          api-key: ${{ secrets.RENDER_API_KEY }}
-          wait-for-success: true
-      
-      - name: Deployment notification
-        if: success()
-        run: echo "Backend 1 deployed successfully!"
+          node-version: ${{ matrix.node-version }}
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: backend/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('backend/package-lock.json', 'backend/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: |
+          if npm run -s lint; then echo "lint ok"; else echo "No lint script or lint failed" && exit 1; fi
+
+      - name: Run tests
+        run: |
+          if npm run -s test -- --ci --coverage --reporter=default; then echo "tests passed"; else echo "tests failed" && exit 1; fi
+
+      - name: Build
+        run: |
+          if npm run -s build; then echo "build OK"; else echo "No build script or build failed" && exit 1; fi
+
+      - name: Upload backend build artifact (optional)
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-build
+          path: |
+            dist
+            build

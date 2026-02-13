@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Link } from "react-router-dom"; 
+import API from "../api";
 
 function SignupStudent() {
   const [form, setForm] = useState({
@@ -55,10 +56,8 @@ function SignupStudent() {
     }
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      alert("Signup successful!");
-      // In real app: navigate("/login/student")
+      const res = await API.post("/auth/signup", form);
+      alert("Signup successful! Please log in.");
     } catch (err) {
       setError("Signup failed");
       alert("Signup failed!");

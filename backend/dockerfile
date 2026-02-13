@@ -1,0 +1,11 @@
+FROM node:20-alpine
+WORKDIR /app
+# copy only package files first for better caching
+COPY package*.json ./
+RUN npm ci --production
+COPY . .
+# if you have build step (ts/babel) run it
+RUN if [ -f package.json ] && grep -q "\"build\"" package.json; then npm run build || true; fi
+ENV NODE_ENV=production
+EXPOSE 4000
+CMD ["node", "src/server.js"]

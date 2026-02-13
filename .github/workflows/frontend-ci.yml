@@ -1,65 +1,67 @@
-name: Frontend CI/CD
+name: Frontend CI
 
 on:
   push:
-    branches: [main, develop]
     paths:
       - 'frontend/**'
-      - '.github/workflows/frontend.yml'
   pull_request:
-    branches: [main, develop]
     paths:
       - 'frontend/**'
 
 jobs:
-  test:
+  frontend:
     runs-on: ubuntu-latest
-    
+    defaults:
+      run:
+        working-directory: frontend
     steps:
-      - uses: actions/checkout@v3
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
-      
-      - name: Install dependencies
-        working-directory: ./frontend
-        run: npm ci
-      
-      - name: Run linter
-        working-directory: ./frontend
-        run: npm run lint || echo "No lint script found"
-      
-      - name: Run tests
-        working-directory: ./frontend
-        run: npm test -- --watchAll=false
-        env:
-          CI: true
-      
-      - name: Build application
-        working-directory: ./frontend
-        run: npm run build
-        env:
-          REACT_APP_API_URL_1: ${{ secrets.REACT_APP_API_URL_1 }}
-          REACT_APP_API_URL_2: ${{ secrets.REACT_APP_API_URL_2 }}
-          CI: false
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          working-directory: ./frontend
-          vercel-args: '--prod'
+          node-version: 18
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('frontend/package-lock.json', 'frontend/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: |
+          if npm run -s lint; then echo "lint OK"; else echo "No lint script or lint failed" && exit 1; fi
+
+      - name: Run tests
+        run: |
+          if npm run -s test -- --watchAll=false; then echo "tests passed"; else echo "No tests or tests failed" && exit 1; fi
+
+      - name: Detect build tool and build
+        run: |
+          if grep -q "\"vite\"" package.json 2>/dev/null; then
+            echo "Detected Vite -> running npm run build (vite)"
+            npm run build
+            echo "artifact_dir=dist" >> $GITHUB_ENV
+          elif grep -q "\"react-scripts\"" package.json 2>/dev/null; then
+            echo "Detected Create React App -> running npm run build"
+            npm run build
+            echo "artifact_dir=build" >> $GITHUB_ENV
+          else
+            echo "No vite or react-scripts found. Attempting npm run build"
+            npm run build || (echo "Build failed; adjust workflow if your build command is different" && exit 1)
+            # If build outputs 'dist' or 'build', it's fine — try both
+            if [ -d build ]; then echo "artifact_dir=build" >> $GITHUB_ENV; fi
+            if [ -d dist ]; then echo "artifact_dir=dist" >> $GITHUB_ENV; fi
+          fi
+
+      - name: Upload frontend build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: ${{ env.artifact_dir }}
