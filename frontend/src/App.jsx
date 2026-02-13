@@ -19,6 +19,9 @@ import After10thExams from "./pages/After10thExams";
 import After12thExams from "./pages/After12thExams";
 import TestRoute from "./pages/Test";
 import AfterTestInfo from "./pages/AfterTestInfo";
+import AdvisorHome from "./pages/AdivisorHome";
+import About from "./pages/About";
+import Features from "./pages/Features";
 
 function App() {
   return (
@@ -43,6 +46,9 @@ function App() {
           <Route path="/exams/after-12th" element={<After12thExams />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/after-test-info" element={<AfterTestInfo />} />
+          <Route path="/advisorhome" element={<AdvisorHome />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/features" element={<Features />} />
         </Routes>
       
       {/* <Footer /> */}

@@ -1,12 +1,53 @@
-import { GraduationCap, Users, Brain, ArrowRight, CheckCircle, Star, BookOpen, Target, MessageCircle, Sparkles, ChevronRight } from "lucide-react";
+import { GraduationCap, Users, Brain, ArrowRight, CheckCircle, Star, BookOpen, Target, MessageCircle, Sparkles, ChevronRight, UserCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 
 function Landing() {
   return (
     <div className="min-h-screen bg-[#FAFBFF] text-slate-900 font-sans selection:bg-indigo-100 selection:text-indigo-900">
       
+      {/* --- NEW CLEAN HEADER --- */}
+      <header className="fixed top-0 left-0 right-0 z-50 px-4 py-4">
+        <nav className="max-w-7xl mx-auto flex items-center justify-between bg-white/70 backdrop-blur-md border border-slate-200/50 px-6 py-3 rounded-2xl shadow-sm">
+          {/* Logo */}
+          <div className="flex items-center gap-2">
+            <div className="bg-indigo-600 p-1.5 rounded-lg">
+              <GraduationCap className="h-5 w-5 text-white" />
+            </div>
+            <span className="text-xl font-bold tracking-tight text-slate-900">CareerBus</span>
+          </div>
+
+          {/* Nav Links & CTA */}
+          <div className="flex items-center gap-6">
+            <div className="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
+              <Link to="/about" className="hover:text-indigo-600 transition-colors">About</Link>
+              <Link to="/features" className="hover:text-indigo-600 transition-colors">Features</Link>
+              <div className="h-4 w-[1px] bg-slate-200" /> {/* Vertical Divider */}
+            </div>
+
+            <div className="flex items-center gap-3">
+              {/* Advisor Portal Link */}
+              <Link 
+                to="/login/advisor" 
+                className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition-all"
+              >
+                <UserCircle className="w-4 h-4" />
+                Advisor Portal
+              </Link>
+
+              {/* Student Login Primary CTA */}
+              <Link 
+                to="/login/student" 
+                className="px-5 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-xl hover:bg-slate-800 transition-all shadow-md shadow-slate-200 active:scale-95"
+              >
+                Student Login
+              </Link>
+            </div>
+          </div>
+        </nav>
+      </header>
+
       {/* Hero Section */}
-      <section className="relative pt-20 pb-16 lg:pt-32 lg:pb-24 px-4 overflow-hidden">
+      <section className="relative pt-32 pb-16 lg:pt-48 lg:pb-24 px-4 overflow-hidden">
         {/* Subtle Background Decoration */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10">
           <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-50/50 blur-[120px] rounded-full" />
@@ -100,7 +141,6 @@ function Landing() {
                 </div>
                 <div className="text-sm font-medium text-indigo-300">Over 200+ Advisors online</div>
               </div>
-              {/* Decorative circle */}
               <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-indigo-600/20 rounded-full blur-3xl group-hover:bg-indigo-600/40 transition-all" />
             </div>
 
@@ -121,7 +161,7 @@ function Landing() {
         </div>
       </section>
 
-      {/* Testimonials - Simplified & Elegant */}
+      {/* Testimonials */}
       <section className="py-24 px-4 bg-[#FAFBFF]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -153,7 +193,7 @@ function Landing() {
         </div>
       </section>
 
-      {/* CTA Section - Minimalist */}
+      {/* CTA Section */}
       <section className="py-20 px-4">
         <div className="max-w-5xl mx-auto bg-slate-900 rounded-[3rem] p-10 md:p-20 text-center relative overflow-hidden">
           <div className="relative z-10">
@@ -166,7 +206,6 @@ function Landing() {
               Get Started for Free
             </Link>
           </div>
-          {/* Subtle background abstract shape */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 blur-[80px] -mr-20 -mt-20" />
         </div>
       </section>
