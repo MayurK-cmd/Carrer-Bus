@@ -12,7 +12,7 @@ connectDB();
 const app = express();
 
 app.use(cors({
-  origin: 'https://carrer-bus.vercel.app', 
+  origin: ['https://carrer-bus.vercel.app', 'http://localhost:5173'],
    // allow only your frontend
   
   credentials: true
