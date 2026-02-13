@@ -1,9 +1,15 @@
 import { useState } from "react";
 import axios from "axios";
-import DashboardHeader from "../components/DashboardHeader";
+import { useNavigate } from "react-router-dom";
+import { Example as Sidebar } from "../components/RetractingSideBar";
+import { 
+  Search, MapPin, GraduationCap, Building2, Filter, 
+  ChevronLeft, ChevronRight, Loader2, Landmark, Trash2, ArrowLeft 
+} from "lucide-react";
 
 function Colleges() {
-  const [searchMode, setSearchMode] = useState("state"); // "state", "city", "search"
+  const navigate = useNavigate();
+  const [searchMode, setSearchMode] = useState("state");
   const [govt, setGovt] = useState(false);
   const [type, setType] = useState("");
   const [state, setState] = useState("");
@@ -13,29 +19,24 @@ function Colleges() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const collegesPerPage = 27;
-
-  // Calculate indices for pagination
-  const indexOfLastCollege = currentPage * collegesPerPage;
-  const indexOfFirstCollege = indexOfLastCollege - collegesPerPage;
-  const currentColleges = colleges.slice(indexOfFirstCollege, indexOfLastCollege);
-  const totalPages = Math.ceil(colleges.length / collegesPerPage);
-
-  // Handle page change
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  const collegesPerPage = 12;
 
   const token = localStorage.getItem("token");
   const API_BASE = "https://sih-73ja.onrender.com/api/data";
 
+  const currentColleges = colleges.slice(
+    (currentPage - 1) * collegesPerPage, 
+    currentPage * collegesPerPage
+  );
+  const totalPages = Math.ceil(colleges.length / collegesPerPage);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    document.getElementById('results-view')?.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const clearInputs = () => {
-    setType("");
-    setState("");
-    setCity("");
-    setName("");
-    setGovt(false);
+    setType(""); setState(""); setCity(""); setName(""); setGovt(false);
   };
 
   const handleSubmit = async (e) => {
@@ -64,10 +65,8 @@ function Colleges() {
       const res = await axios.post(url, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       setColleges(res.data || []);
     } catch (err) {
-      console.error("Error fetching colleges:", err);
       setError("Failed to fetch colleges. Please try again.");
     } finally {
       setCurrentPage(1);
@@ -75,418 +74,225 @@ function Colleges() {
     }
   };
 
-  const collegeTypes = [
-    "Engineering",
-    "Medical",
-    "Nursing",
-    "Commerce",
-    "Arts",
-    "Law",
-    "Management",
-    "Pharmacy",
-    "Agriculture",
-    "Polytechnic",
-    "Design",
-    "Education",
-    "Others",
-  ];
-
-  const indianStates = [
-    "Andhra Pradesh",
-    "Arunachal Pradesh",
-    "Assam",
-    "Bihar",
-    "Chhattisgarh",
-    "Goa",
-    "Gujarat",
-    "Haryana",
-    "Himachal Pradesh",
-    "Jharkhand",
-    "Karnataka",
-    "Kerala",
-    "Madhya Pradesh",
-    "Maharashtra",
-    "Manipur",
-    "Meghalaya",
-    "Mizoram",
-    "Nagaland",
-    "Odisha",
-    "Punjab",
-    "Rajasthan",
-    "Sikkim",
-    "Tamil Nadu",
-    "Telangana",
-    "Tripura",
-    "Uttar Pradesh",
-    "Uttarakhand",
-    "West Bengal",
-    "Andaman and Nicobar Islands",
-    "Chandigarh",
-    "Dadra and Nagar Haveli and Daman and Diu",
-    "Delhi",
-    "Jammu and Kashmir",
-    "Ladakh",
-    "Lakshadweep",
-    "Puducherry",
-  ];
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      <div className="mt-25">
-        <DashboardHeader />
-      </div>
+    <div className="min-h-screen bg-[#FAFBFF] flex font-sans selection:bg-indigo-100">
+      <Sidebar />
       
-      {/* Hero Section */}
-      <div className="relative overflow-hidden pt-8">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-6 px-4">
-              Discover Colleges
-            </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto px-4">
-              Find the perfect college for your future. Search by location, type, and more.
-            </p>
-          </div>
+      <main className="flex-1 flex flex-col h-screen overflow-hidden relative">
+        
+        {/* Top Navigation Bar (Simplified) */}
+        <div className="h-16 flex items-center px-6 bg-white/80 backdrop-blur-md border-b border-slate-100 z-30">
+          <button 
+            onClick={() => navigate("/home")}
+            className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all font-bold text-sm group"
+          >
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            Go Back
+          </button>
         </div>
-      </div>
 
-      {/* Search Form */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 -mt-8">
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6">
-            <h2 className="text-2xl font-bold text-white text-center">Search Colleges</h2>
-          </div>
+        <div className="flex-1 flex overflow-hidden">
           
-          <form onSubmit={handleSubmit} className="p-8 space-y-6">
-            {/* Search Mode Tabs */}
-            <div className="flex flex-wrap justify-center gap-2 p-1 bg-gray-100 rounded-xl">
-              {[
-                { value: "state", label: "By State", icon: "🏛️" },
-                { value: "city", label: "By City", icon: "🏙️" },
-                { value: "search", label: "By Name", icon: "🔍" }
-              ].map((mode) => (
-                <button
-                  key={mode.value}
-                  type="button"
-                  onClick={() => setSearchMode(mode.value)}
-                  className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 ${
-                    searchMode === mode.value
-                      ? "bg-white shadow-md text-blue-600 scale-105"
-                      : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
-                  }`}
-                >
-                  <span>{mode.icon}</span>
-                  {mode.label}
-                </button>
-              ))}
+          {/* Left Sidebar: Filters */}
+          <aside className="w-80 bg-white border-r border-slate-100 hidden lg:flex flex-col overflow-y-auto p-6 pt-8">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="p-2 bg-indigo-50 rounded-lg">
+                <Filter className="w-5 h-5 text-indigo-600" />
+              </div>
+              <h2 className="text-xl font-bold text-slate-900 tracking-tight">Filters</h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* College Type */}
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">
-                  College Type <span className="text-red-500">*</span>
-                </label>
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Search Mode</label>
+                <div className="grid grid-cols-1 gap-1 p-1 bg-slate-50 rounded-2xl">
+                  {['state', 'city', 'search'].map((m) => (
+                    <button
+                      key={m}
+                      type="button"
+                      onClick={() => setSearchMode(m)}
+                      className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all capitalize ${
+                        searchMode === m ? "bg-white text-indigo-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                      }`}
+                    >
+                      {m === 'search' ? 'By Name' : `By ${m}`}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">College Type</label>
                 <select
                   value={type}
                   onChange={(e) => setType(e.target.value)}
                   required
-                  className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm"
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all appearance-none cursor-pointer"
                 >
-                  <option value="">Select college type</option>
-                  {collegeTypes.map((cType, idx) => (
-                    <option key={idx} value={cType.toLowerCase()}>
-                      {cType}
-                    </option>
+                  <option value="">Select Stream</option>
+                  {["Engineering", "Medical", "Nursing", "Commerce", "Arts", "Law", "Management", "Pharmacy"].map(t => (
+                    <option key={t} value={t.toLowerCase()}>{t}</option>
                   ))}
                 </select>
               </div>
 
-              {/* Government Filter */}
-              <div className="flex items-center justify-center">
-                <label className="inline-flex items-center cursor-pointer bg-gray-50 px-6 py-3 rounded-xl hover:bg-gray-100 transition-colors duration-200">
-                  <input
-                    type="checkbox"
-                    checked={govt}
-                    onChange={() => setGovt(!govt)}
-                    className="sr-only"
-                  />
-                  <div className={`w-6 h-6 rounded-md border-2 mr-3 flex items-center justify-center transition-all duration-200 ${
-                    govt ? "bg-blue-500 border-blue-500" : "border-gray-300"
-                  }`}>
-                    {govt && <span className="text-white text-sm">✓</span>}
-                  </div>
-                  <span className="text-sm font-medium text-gray-700">Government Colleges Only</span>
-                </label>
-              </div>
-            </div>
-
-            {/* Conditional Inputs */}
-            <div className="space-y-4">
-              {searchMode === "state" && (
-                <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">
-                    State <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    value={state}
-                    onChange={(e) => setState(e.target.value)}
-                    required
-                    className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm"
-                  >
-                    <option value="">Select state</option>
-                    {indianStates.map((st, idx) => (
-                      <option key={idx} value={st}>
-                        {st}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
-
-              {searchMode === "city" && (
-                <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">
-                    City <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter city name"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    required
-                    className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm placeholder-gray-400"
-                  />
-                </div>
-              )}
-
-              {searchMode === "search" && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-4">
+                {(searchMode === "state" || searchMode === "search") && (
                   <div className="space-y-2">
-                    <label className="block text-sm font-semibold text-gray-700">
-                      College Name <span className="text-red-500">*</span>
-                    </label>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">State</label>
                     <input
                       type="text"
-                      placeholder="Enter college name"
+                      placeholder="Enter State"
+                      value={state}
+                      onChange={(e) => setState(e.target.value)}
+                      required={searchMode === "state"}
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 outline-none"
+                    />
+                  </div>
+                )}
+
+                {(searchMode === "city" || searchMode === "search") && (
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">City</label>
+                    <input
+                      type="text"
+                      placeholder="Enter City"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      required={searchMode === "city"}
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 outline-none"
+                    />
+                  </div>
+                )}
+
+                {searchMode === "search" && (
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Institution Name</label>
+                    <input
+                      type="text"
+                      placeholder="Enter College Name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       required
-                      className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm placeholder-gray-400"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 outline-none"
                     />
                   </div>
-
-                  <div className="space-y-2">
-                    <label className="block text-sm font-semibold text-gray-700">
-                      State (Optional)
-                    </label>
-                    <select
-                      value={state}
-                      onChange={(e) => setState(e.target.value)}
-                      className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm"
-                    >
-                      <option value="">Any state</option>
-                      {indianStates.map((st, idx) => (
-                        <option key={idx} value={st}>
-                          {st}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="block text-sm font-semibold text-gray-700">
-                      City (Optional)
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Any city"
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
-                      className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm placeholder-gray-400"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex justify-center gap-4 pt-4">
-              <button
-                type="submit"
-                disabled={loading}
-                className="px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-purple-700 focus:ring-4 focus:ring-blue-300 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center gap-2"
-              >
-                {loading ? (
-                  <>
-                    <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24">
-                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" strokeLinecap="round" strokeDasharray="32" strokeDashoffset="32">
-                        <animate attributeName="stroke-dasharray" dur="2s" values="0 32;16 16;0 32;0 32" repeatCount="indefinite"/>
-                        <animate attributeName="stroke-dashoffset" dur="2s" values="0;-16;-32;-32" repeatCount="indefinite"/>
-                      </circle>
-                    </svg>
-                    Searching...
-                  </>
-                ) : (
-                  <>
-                    🔍 Search Colleges
-                  </>
                 )}
-              </button>
-              
-              <button
-                type="button"
-                onClick={clearInputs}
-                className="px-6 py-3 bg-gray-500 text-white font-semibold rounded-xl hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 transition-all duration-200 transform hover:scale-105"
-              >
-                🗑️ Clear
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
+              </div>
 
-      {/* Results Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-        {error && (
-          <div className="mb-8 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl flex items-center gap-2">
-            <span className="text-xl">❌</span>
-            {error}
-          </div>
-        )}
-
-        {loading && (
-          <div className="text-center py-12">
-            <div className="inline-flex items-center gap-3 text-blue-600">
-              <svg className="w-8 h-8 animate-spin" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" strokeLinecap="round" strokeDasharray="32" strokeDashoffset="32">
-                  <animate attributeName="stroke-dasharray" dur="2s" values="0 32;16 16;0 32;0 32" repeatCount="indefinite"/>
-                  <animate attributeName="stroke-dashoffset" dur="2s" values="0;-16;-32;-32" repeatCount="indefinite"/>
-                </circle>
-              </svg>
-              <span className="text-lg font-medium">Loading colleges...</span>
-            </div>
-          </div>
-        )}
-
-        {colleges.length > 0 && (
-          <div className="space-y-6">
-            {/* Results Header */}
-            <div className="text-center">
-              <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                Found {colleges.length} College{colleges.length !== 1 ? 's' : ''}
-              </h3>
-              <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full"></div>
-            </div>
-
-            {/* College Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {currentColleges.map((college, index) => (
-                <div
-                  key={index}
-                  className="group bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-2xl hover:scale-105 transition-all duration-300"
+              <div className="pt-4 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setGovt(!govt)}
+                  className={`w-full p-4 rounded-2xl border transition-all flex items-center justify-between group ${
+                    govt ? "bg-indigo-50 border-indigo-200" : "bg-white border-slate-200 hover:border-slate-300"
+                  }`}
                 >
-                  <div className="h-2 bg-gradient-to-r from-blue-500 to-purple-600"></div>
-                  <div className="p-6">
-                    <div className="mb-3">
-                      <h4 className="text-lg font-bold text-gray-800 group-hover:text-blue-600 transition-colors duration-200 line-clamp-2">
-                        {college.name}
-                      </h4>
-                    </div>
-                    
-                    <div className="space-y-2 text-gray-600">
-                      <div className="flex items-center gap-2">
-                        <span className="text-blue-500">📍</span>
-                        <span className="text-sm">{college.city}, {college.state}</span>
-                      </div>
-                      
-                      {college.type && (
-                        <div className="flex items-center gap-2">
-                          <span className="text-purple-500">🎓</span>
-                          <span className="text-sm capitalize">{college.type}</span>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="mt-4 pt-4 border-t border-gray-100">
-                      <button className="text-blue-600 hover:text-blue-800 font-medium text-sm transition-colors duration-200">
-                        View Details →
-                      </button>
-                    </div>
+                  <span className={`text-sm font-bold ${govt ? "text-indigo-900" : "text-slate-600"}`}>Government Only</span>
+                  <div className={`w-10 h-6 rounded-full relative transition-colors ${govt ? "bg-indigo-600" : "bg-slate-200"}`}>
+                    <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${govt ? "left-5" : "left-1"}`} />
                   </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex justify-center items-center gap-2 mt-8">
-                <button
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  className={`px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
-                    currentPage === 1
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-white text-blue-600 hover:bg-blue-50 shadow-md hover:shadow-lg"
-                  }`}
-                >
-                  ← Previous
                 </button>
+              </div>
 
-                <div className="flex gap-1">
-                  {[...Array(Math.min(5, totalPages)).keys()].map((i) => {
-                    let page;
-                    if (totalPages <= 5) {
-                      page = i + 1;
-                    } else if (currentPage <= 3) {
-                      page = i + 1;
-                    } else if (currentPage >= totalPages - 2) {
-                      page = totalPages - 4 + i;
-                    } else {
-                      page = currentPage - 2 + i;
-                    }
-                    
-                    return (
-                      <button
-                        key={page}
-                        onClick={() => handlePageChange(page)}
-                        className={`w-10 h-10 rounded-xl font-medium transition-all duration-200 ${
-                          currentPage === page
-                            ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg scale-110"
-                            : "bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg"
-                        }`}
-                      >
-                        {page}
+              <div className="space-y-3 pt-4">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold shadow-xl shadow-slate-200 hover:bg-slate-800 transition-all active:scale-95 flex items-center justify-center gap-2"
+                >
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Search className="w-5 h-5" /> Search</>}
+                </button>
+                <button
+                  type="button"
+                  onClick={clearInputs}
+                  className="w-full py-3 text-slate-400 font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:text-rose-500 transition-colors"
+                >
+                  <Trash2 className="w-3.5 h-3.5" /> Clear
+                </button>
+              </div>
+            </form>
+          </aside>
+
+          {/* Right Area: Results */}
+          <div id="results-view" className="flex-1 overflow-y-auto p-6 lg:p-10 pt-8 bg-[#FAFBFF]">
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="h-64 bg-slate-100 rounded-[2.5rem] animate-pulse" />
+                ))}
+              </div>
+            ) : colleges.length > 0 ? (
+              <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
+                <div className="border-b border-slate-100 pb-6">
+                  <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Institutions</h1>
+                  <p className="text-slate-500 font-medium">Found {colleges.length} results</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {currentColleges.map((college, idx) => (
+                    <div key={idx} className="group bg-white p-7 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+                      <div>
+                        <div className="flex justify-between items-start mb-6">
+                          <div className="p-3 bg-slate-50 rounded-2xl text-slate-400 group-hover:text-indigo-600 group-hover:bg-indigo-50 transition-colors">
+                            {govt ? <Landmark className="w-6 h-6" /> : <Building2 className="w-6 h-6" />}
+                          </div>
+                        </div>
+                        <h3 className="text-lg font-bold text-slate-900 leading-tight group-hover:text-indigo-600 transition-colors line-clamp-2">
+                          {college.name}
+                        </h3>
+                        <div className="mt-4 flex items-center gap-2 text-slate-500 text-sm">
+                          <MapPin className="w-4 h-4 text-rose-400" />
+                          <span className="font-medium">{college.city}, {college.state}</span>
+                        </div>
+                      </div>
+
+                      <button className="mt-8 w-full py-4 bg-slate-50 hover:bg-indigo-600 hover:text-white text-slate-600 rounded-2xl text-sm font-bold transition-all flex items-center justify-center gap-2">
+                        View Details <ChevronRight className="w-4 h-4" />
                       </button>
-                    );
-                  })}
+                    </div>
+                  ))}
                 </div>
 
-                <button
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                  className={`px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
-                    currentPage === totalPages
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-white text-blue-600 hover:bg-blue-50 shadow-md hover:shadow-lg"
-                  }`}
-                >
-                  Next →
-                </button>
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="flex justify-center items-center gap-4 py-20">
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="p-3 bg-white border border-slate-100 rounded-xl disabled:opacity-30"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <div className="px-6 py-3 bg-white border border-slate-100 rounded-xl font-bold text-slate-400">
+                      {currentPage} / {totalPages}
+                    </div>
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="p-3 bg-white border border-slate-100 rounded-xl disabled:opacity-30"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="h-full flex flex-col items-center justify-center text-center">
+                <div className="bg-white p-12 rounded-[3.5rem] shadow-sm border border-slate-50 max-w-sm">
+                  <div className="w-20 h-20 bg-indigo-50 rounded-[2rem] flex items-center justify-center mx-auto mb-6">
+                    <Search className="w-10 h-10 text-indigo-400" />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">Find your college</h3>
+                  <p className="text-slate-500 text-sm leading-relaxed">
+                    Select your search criteria in the filter panel to begin exploring.
+                  </p>
+                </div>
               </div>
             )}
           </div>
-        )}
-
-        {!loading && colleges.length === 0 && (type || state || city || name) && (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-xl font-semibold text-gray-600 mb-2">No colleges found</h3>
-            <p className="text-gray-500">Try adjusting your search criteria</p>
-          </div>
-        )}
-      </div>
+        </div>
+      </main>
     </div>
   );
 }

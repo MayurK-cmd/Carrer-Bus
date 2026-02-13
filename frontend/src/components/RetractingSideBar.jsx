@@ -76,64 +76,91 @@ const Sidebar = () => {
     fetchUserProfile();
   }, []);
 
-  return (
+//   return (
+//     <motion.nav
+//       layout
+//       className="sticky top-0 h-screen shrink-0 border-r border-slate-300 bg-white p-2"
+//       style={{
+//         width: open ? "225px" : "fit-content",
+//       }}
+//     >
+//       <TitleSection open={open} userProfile={userProfile} />
+
+//       <div className="space-y-1">
+//         <Option
+//           Icon={FiHome}
+//           title="Home"
+//           selected={selected}
+//           onClick={() => handleNavigation("Home", "/home")}
+//           open={open}
+//         />
+//         <Option
+//           Icon={FiDollarSign}
+//           title="Take Test"
+//           selected={selected}
+//           onClick={() => handleNavigation("Take Test", "/test")}
+//           open={open}
+          
+//         />
+//         <Option
+//           Icon={FiMonitor}
+//           title="Connect to a Advisor"
+//           selected={selected}
+//           onClick={() => handleNavigation("Connect to a Advisor", "/404/404/too-early/here/lol")}
+//           open={open}
+//         />
+//         <Option
+//           Icon={FiShoppingCart}
+//           title="About Us"
+//           selected={selected}
+//           onClick={() => handleNavigation("About Us", "/404/404/too-early/here/lol")}
+//           open={open}
+//         />
+//         <Option
+//           Icon={FiUsers}
+//           title="Profile"
+//           selected={selected}
+//           onClick={() => handleNavigation("Profile", "/profile")}
+//           open={open}
+//         />
+//         <Option
+//           Icon={FiLogOut}
+//           title="Logout"
+//           selected={selected}
+//           onClick={handleLogout}
+//           open={open}
+//           isLogout={true}
+//         />
+//       </div>
+
+//       <ToggleClose open={open} setOpen={setOpen} />
+//     </motion.nav>
+//   );
+// };
+
+return (
     <motion.nav
       layout
-      className="sticky top-0 h-screen shrink-0 border-r border-slate-300 bg-white p-2"
-      style={{
-        width: open ? "225px" : "fit-content",
-      }}
+      className="sticky top-0 h-screen shrink-0 border-r border-slate-100 bg-white p-4 flex flex-col justify-between"
+      style={{ width: open ? "260px" : "88px" }}
     >
-      <TitleSection open={open} userProfile={userProfile} />
-
-      <div className="space-y-1">
-        <Option
-          Icon={FiHome}
-          title="Home"
-          selected={selected}
-          onClick={() => handleNavigation("Home", "/home")}
-          open={open}
-        />
-        <Option
-          Icon={FiDollarSign}
-          title="Take Test"
-          selected={selected}
-          onClick={() => handleNavigation("Take Test", "/test")}
-          open={open}
-          
-        />
-        <Option
-          Icon={FiMonitor}
-          title="Connect to a Advisor"
-          selected={selected}
-          onClick={() => handleNavigation("Connect to a Advisor", "/404/404/too-early/here/lol")}
-          open={open}
-        />
-        <Option
-          Icon={FiShoppingCart}
-          title="About Us"
-          selected={selected}
-          onClick={() => handleNavigation("About Us", "/404/404/too-early/here/lol")}
-          open={open}
-        />
-        <Option
-          Icon={FiUsers}
-          title="Profile"
-          selected={selected}
-          onClick={() => handleNavigation("Profile", "/profile")}
-          open={open}
-        />
-        <Option
-          Icon={FiLogOut}
-          title="Logout"
-          selected={selected}
-          onClick={handleLogout}
-          open={open}
-          isLogout={true}
-        />
+      <div>
+        <TitleSection open={open} userProfile={userProfile} />
+        
+        <div className="space-y-2 mt-8">
+          <Option Icon={FiHome} title="Home" selected={selected} onClick={() => handleNavigation("Home", "/home")} open={open} />
+          <Option Icon={FiTag} title="Take Test" selected={selected} onClick={() => handleNavigation("Take Test", "/test")} open={open} />
+          <Option Icon={FiMonitor} title="Connect to a Advisor" selected={selected} onClick={() => handleNavigation("Connect to a Advisor", "/connect-advisor")} open={open} />
+          <Option Icon={FiShoppingCart} title="About Us" selected={selected} onClick={() => handleNavigation("About Us", "/about")} open={open} />
+          <Option Icon={FiUsers} title="Profile" selected={selected} onClick={() => handleNavigation("Profile", "/profile")} open={open} />
+          <Option Icon={FiLogOut} title="Logout" onClick={handleLogout} open={open} isLogout={true} />
+        </div>
       </div>
 
-      <ToggleClose open={open} setOpen={setOpen} />
+      <div className="space-y-2">
+        
+        <ToggleClose open={open} setOpen={setOpen} />
+      </div>
     </motion.nav>
   );
 };

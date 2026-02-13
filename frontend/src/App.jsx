@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import Header from "./components/LanndingHeader";
+//import Header from "./components/LanndingHeader";
 //import Footer from "./components/Footer";
 
 import Landing from "./pages/Landing";
@@ -23,8 +23,8 @@ import AfterTestInfo from "./pages/AfterTestInfo";
 function App() {
   return (
     <div className="app-container">
-      <Header />
-      <main style={{ minHeight: "80vh", padding: "1rem" }}>
+      
+      
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login/student" element={<LoginStudent />} />
@@ -44,7 +44,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/after-test-info" element={<AfterTestInfo />} />
         </Routes>
-      </main>
+      
       {/* <Footer /> */}
     </div>
   );
