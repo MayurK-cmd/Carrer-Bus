@@ -1,4 +1,4 @@
-```markdown
+
 # 🚌 CareerBus
 
 A high-performance career guidance platform designed to bridge the gap between students and their professional futures. This project features a modern UI overhaul, AI-powered assessments, and a comprehensive database for colleges and exams.
@@ -94,12 +94,5 @@ PORT=5000
 
 ## 📜 License
 
-This project is for internal development and portfolio purposes.
+This project is for internal development .
 
----
-
-**Would you like me to add a "Troubleshooting" section for common MongoDB connection issues or a "Deployment" guide for Vercel/Render?**
-
-```
-
-```
